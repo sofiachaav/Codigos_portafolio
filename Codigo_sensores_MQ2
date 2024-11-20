@@ -1,3 +1,5 @@
+//codigo sensores es un proyecto de sensores de gases incrustados a elementos de la minería, para prevenir accidentes fatales relacionados con la inhalacion de gases toxicos
+
 // Definir los pines del sensor MQ2
 const int pin_analogico = A0;
 const int pin_buzzer = 2;
