@@ -1,0 +1,107 @@
+//Codigo pinguino es un proyecto de stand up comedy realizado con P5, donde una IA describe memes de forma cómica
+// Modo actual (texto o imagen)
+let mode = 'text';
+
+// Imagen del pingüino
+let img;
+
+// Global variable to store the classifier
+let classifier;
+
+// Label
+let label = 'PREPARENSE...';
+
+// Tiempo en milisegundos que la imagen se mostrará en pantalla (5 segundos)
+//const displayTime = 5000;
+
+// Indicador para controlar si se está reproduciendo la descripción
+let isSpeaking = false;
+
+// Teachable Machine model URL:
+let soundModel = 'https://teachablemachine.withgoogle.com/models/mTRZ6Yho7/';
+
+// Crear un objeto de síntesis de voz
+const synth = window.speechSynthesis;
+
+function preload() {
+  // Variable clasificadora de sonido desde teachable machine, con .json, sounModel es el url alojado en la web de clasificador de sonido
+  classifier = ml5.soundClassifier(soundModel + 'model.json');
+  // Load the image
+  img = loadImage("pinguino-waton.PNG");
+}
+
+function setup() {
+  createCanvas(320, 240);
+  // Start classifying
+  // The sound model will continuously listen to the microphone
+  classifier.classify(gotResult);
+}
+
+function draw() {
+  background(0);
+  // Dibujar en funcion del modo actual
+  if (mode === 'text') {
+    fill(255);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text(label, width / 2, height / 2);
+  } else if (mode === 'image') {
+    image(img, 0, 0, width, height);
+  }
+}
+
+// The model recognizing a sound will trigger this event
+function gotResult(error, results) {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  console.log(results[0]); // Muestra los resultados en la consola
+  // Actualiza la etiqueta solo si se detecta "Uno"
+  if (results[0].label === 'Imagen') {
+    // Leer el texto en voz alta
+    speakText('Se presenta una imagen de un pingüino rey exageradamente redondo, con un filtro amarillento cubriéndolo. Y con el texto, oh, ya no me des más gaseosa, estoy muy satisfecho, pero claramente escrito con más cantidad de improperios');
+    // Marcar que la frase precargada ha sido detectada
+    presentationDetected = true;
+  } else {
+    // Volver al modo de texto
+    mode = 'text';
+    // Las otras etiquetas se asignan directamente
+    label = results[0].label;
+  }
+}
+
+// Función para leer el texto en voz alta
+function speakText(text) {
+  let utterance = new SpeechSynthesisUtterance(text);
+  utterance.onstart = function() {
+    // Cuando comienza la lectura en voz alta, cambiar al modo de imagen
+    mode = 'image';
+    isSpeaking = true;
+  };
+  utterance.onend = function() {
+    // Cuando la lectura en voz alta haya terminado, volver al modo de texto
+    mode = 'text';
+    isSpeaking = false;
+};
+  synth.speak(utterance);
+}
+
+ //La función draw() se llama automáticamente en p5.js
+function draw() {
+  background(0);
+   //Dibujar la imagen si se está reproduciendo la descripción
+  if (isSpeaking) {
+    image(img, 0, 0, width, height);
+  } else {
+     //Dibujar el texto si no se está reproduciendo la descripción
+    fill(255);
+    textSize(32);
+   textAlign(CENTER, CENTER);
+     //colocar el texto a la mitad del ancho y de alto
+   text(label, width / 2, height / 2);
+ }
+}
+  if (label === 'Imagen') {
+    stopLoop = true;
+  }
