@@ -1,0 +1,34 @@
+// Definir los pines del sensor MQ2
+const int pin_analogico = A0;
+const int pin_buzzer = 2;
+
+
+void setup() {
+  // Inicializar la comunicación serie a una velocidad de 9600 baudios
+  Serial.begin(9600);
+  pinMode(pin_buzzer, OUTPUT);
+}
+
+
+void loop() {
+  // Leer el valor analógico del sensor MQ2
+  int valor_analogico = analogRead(pin_analogico);
+
+
+  // Enviar el valor analógico al computador
+  Serial.println("Valor analógico: " + String(valor_analogico));
+
+
+  if (valor_analogico > 500) {
+    // Activar el buzzer
+    // digitalWrite(pin_buzzer, HIGH);
+    tone(pin_buzzer, 2000);
+    delay(500);
+  } else {
+    // Desactivar el buzzer
+    // digitalWrite(pin_buzzer, LOW);}
+    noTone(pin_buzzer);
+    // Esperar medio segundo
+    delay(500);
+  }
+}
