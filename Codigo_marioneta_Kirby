@@ -1,3 +1,5 @@
+// codigo Kirby es un proyecto de una marioneta construida con motores servo Arduino, donde los movimientos de este mueven los brazos y piernas de un muñeco del personaje Kirby
+
 #include <Servo.h>
 
 
