@@ -1,0 +1,57 @@
+#include <Servo.h>
+
+
+Servo servoMotor;        // Objeto del servo
+const int servoPin = 9;  // Pin donde está conectado el servo
+const int buttonPin = 7; // Pin donde está conectado el botón
+
+
+bool isRunning = false;  // Variable para controlar el estado del movimiento
+bool lastButtonState = LOW; // Estado anterior del botón
+unsigned long lastDebounceTime = 0; // Tiempo del último cambio de estado del botón
+const unsigned long debounceDelay = 50; // Retardo para evitar el rebote (en milisegundos)
+
+
+void setup() {
+  servoMotor.attach(servoPin); // Asignar pin del servo
+  pinMode(buttonPin, INPUT_PULLUP); // Configurar el botón como entrada con resistencia pull-up
+  servoMotor.write(0); // Asegurar que el servo inicie en 0 grados
+}
+
+
+void loop() {
+  int reading = digitalRead(buttonPin); // Leer el estado del botón
+
+
+  // Verificar cambios en el botón con lógica antirrebote
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+
+
+  // Cambiar el estado solo si ha pasado el tiempo de antirrebote
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading == LOW) { // Si se detecta un clic
+      isRunning = !isRunning; // Alternar el estado del movimiento
+    }
+  }
+
+
+  lastButtonState = reading; // Guardar el estado actual del botón
+
+
+  // Movimiento del servo si isRunning es true
+  if (isRunning) {
+    for (int pos = 0; pos <= 180; pos++) { // Movimiento de 0 a 180 grados
+      servoMotor.write(pos);
+      delay(15); // Ajustar para velocidad del movimiento
+    }
+    for (int pos = 180; pos >= 0; pos--) { // Movimiento de 180 a 0 grados
+      servoMotor.write(pos);
+      delay(15); // Ajustar para velocidad del movimiento
+    }
+  }
+}
+
+
+
